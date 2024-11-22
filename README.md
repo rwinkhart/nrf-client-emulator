@@ -10,7 +10,7 @@ Clients for other vendors _may_ be implemented in the future.
 # How-To
 
 ## Arista
-1. Download (binaries not yet available) or compile nrf-client-emulator for your target hardware.
+1. Download or compile nrf-client for your target hardware and operating system.
 2. Install the binary on the target system at `/mnt/flash/nrf-client`. You may want to copy it over using `scp` from `bash` mode.
 3. Ensure the binary is executable (`chmod +x /mnt/flash/nrf-client` in `bash` mode).
 4. Enable eAPI access from `config terminal`.
