@@ -1,4 +1,11 @@
 /system/script/add name=nrf-client source={
+    # avoid running multiple instances of the script at once
+    :global nrfRunning
+    :if ($nrfRunning="1") do={
+        :return;
+    }
+    :set nrfRunning 1;
+
     :global nrfServer
     :global nrfFailGroup
     :global nrfPortsDown
@@ -24,4 +31,6 @@
             :set nrfPortsDown 1;
         }
     }
+
+    :set nrfRunning 0;
 }
