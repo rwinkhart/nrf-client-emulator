@@ -65,9 +65,11 @@ func main() {
 	_, err := os.Stat("/mnt/flash/eapi.conf")
 	if os.IsNotExist(err) {
 		// configuration does not exist; generate a default one
+		fmt.Println("/mnt/flash/eapi.conf does not exist; generating template and exiting...")
 		f, _ := os.Create("/mnt/flash/eapi.conf")
 		f.WriteString("[connection:nrfLocalClient]\nhost=127.0.0.1\nusername=admin\npassword=nrf\nenablepwd=\ntransport=http\n")
 		f.Close()
+		os.Exit(0)
 	}
 
 	// interpret command-line arguments
@@ -82,7 +84,7 @@ func main() {
 	node, _ := eAPI.ConnectTo("nrfLocalClient")
 	intHandler := eAPIModule.Interface(node)
 
-	var portsDown = false
+	var portsDown = true // default to true to ensure ports are always set to up on boot
 	for {
 		if isReachable() {
 			// the NRF server is reachable
@@ -93,6 +95,7 @@ func main() {
 				fmt.Println("Ports down, restoring...")
 				// restore ports
 				for _, port := range failPorts {
+					fmt.Println("Restoring " + port)
 					intHandler.SetShutdown(port, false)
 				}
 				portsDown = false
@@ -106,6 +109,7 @@ func main() {
 				fmt.Println("Ports up, failing...")
 				// down ports
 				for _, port := range failPorts {
+					fmt.Println("Downing " + port)
 					intHandler.SetShutdown(port, true)
 				}
 				portsDown = true
