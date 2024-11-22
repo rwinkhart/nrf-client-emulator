@@ -15,7 +15,8 @@ import (
 
 // isReachable returns a boolean value to indicate if the
 // destination provided as the first user argument is reachable.
-func isReachable(pinger *probing.Pinger) bool {
+func isReachable() bool {
+	pinger, _ := probing.NewPinger(os.Args[1])
 	pinger.Count = 1
 	pinger.Timeout = 1 * time.Second
 	_ = pinger.Run()
@@ -74,7 +75,6 @@ func main() {
 		fmt.Printf("Usage: %s <nrf server IP> <interval (seconds)> <fail range>\n", os.Args[0])
 		os.Exit(1)
 	}
-	pinger, _ := probing.NewPinger(os.Args[1])
 	interval, _ := strconv.Atoi(os.Args[2])
 	failPorts := getFailPorts()
 
@@ -84,11 +84,13 @@ func main() {
 
 	var portsDown = false
 	for {
-		if isReachable(pinger) {
+		if isReachable() {
 			// the NRF server is reachable
 			// check if ports are down
 			// restore them if they are
+			fmt.Println("Reachable!")
 			if portsDown {
+				fmt.Println("Ports down, restoring...")
 				// restore ports
 				for _, port := range failPorts {
 					intHandler.SetShutdown(port, false)
@@ -99,7 +101,9 @@ func main() {
 			// the NRF server is not reachable
 			// check if ports are up
 			// down them if they are
+			fmt.Println("Unreachable!")
 			if !portsDown {
+				fmt.Println("Ports up, failing...")
 				// down ports
 				for _, port := range failPorts {
 					intHandler.SetShutdown(port, true)
