@@ -1,0 +1,27 @@
+/system/script/add name=nrf-client source={
+    :global nrfServer
+    :global nrfFailGroup
+    :global nrfPortsDown
+
+    # ensure portsDown is initialized
+    :if (($nrfPortsDown!="1") && ($nrfPortsDown!="0")) do={
+        :set nrfPortsDown 1;
+    }
+
+    # check reachability of the target address and manipulate interfaces accordingly
+    :if ([/ping count=1 $nrfServer]=1) do={
+        :if ($nrfPortsDown=1) do={
+            :for i from=0 to=([:len $nrfFailGroup]-1) do={
+              /interface enable [find name=($nrfFailGroup->"$i")];
+            }
+            :set nrfPortsDown 0;
+        }
+    } else={
+        :if ($nrfPortsDown=0) do={
+            :for i from=0 to=([:len $nrfFailGroup]-1) do={
+                /interface disable [find name=($nrfFailGroup->"$i")];
+            }
+            :set nrfPortsDown 1;
+        }
+    }
+}
