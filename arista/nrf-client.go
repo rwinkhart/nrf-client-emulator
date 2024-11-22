@@ -74,7 +74,7 @@ func main() {
 
 	// interpret command-line arguments
 	if len(os.Args) < 4 {
-		fmt.Printf("Usage: %s <nrf server IP> <interval (seconds)> <fail range>\n", os.Args[0])
+		fmt.Printf("Usage: %s <nrf server IP> <interval (seconds)> <fail range, e.g. Et2-4,Et7>\n", os.Args[0])
 		os.Exit(1)
 	}
 	interval, _ := strconv.Atoi(os.Args[2])
